@@ -68,4 +68,10 @@ public class UserHandler {
 
         return userUpdated.flatMap(response -> ServerResponse.ok().body(BodyInserters.fromValue(response))).switchIfEmpty(ServerResponse.notFound().build());
     }
+
+    public Mono<ServerResponse> deleteUser(ServerRequest serverRequest) {
+        String id = serverRequest.pathVariable("id");
+
+        return userService.deleteUser(id).flatMap(response -> ServerResponse.noContent().build()).switchIfEmpty(ServerResponse.notFound().build());
+    }
 }

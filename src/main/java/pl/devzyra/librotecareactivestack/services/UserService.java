@@ -11,4 +11,6 @@ public interface UserService {
     Flux<UserDocument> getAllUsers();
 
     Mono<UserDocument> saveUser(UserDocument userDocument);
+
+    Mono<UserDocument> deleteUser(String id);
 }

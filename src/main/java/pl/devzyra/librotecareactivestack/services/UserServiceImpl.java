@@ -32,4 +32,11 @@ public class UserServiceImpl implements pl.devzyra.librotecareactivestack.servic
     public Mono<UserDocument> saveUser(UserDocument user) {
         return userRepository.save(user);
     }
+
+    @Override
+    public Mono<UserDocument> deleteUser(String id) {
+
+        return userRepository.findById(id)
+                .flatMap(user -> userRepository.delete(user).then(Mono.just(user)));
+    }
 }

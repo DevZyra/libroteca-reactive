@@ -20,7 +20,8 @@ public class UserRouter {
                         .GET("", userHandler::getAllUsers)
                         .GET("/{id}", userHandler::getUser)
                         .POST("", userHandler::createUser)
-                        .PUT("/{id}", userHandler::updateUser))
+                        .PUT("/{id}", userHandler::updateUser)
+                        .DELETE("/{id}",userHandler::deleteUser))
                 .build();
 
 
