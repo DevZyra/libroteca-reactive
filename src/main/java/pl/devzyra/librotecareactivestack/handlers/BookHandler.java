@@ -30,4 +30,34 @@ public class BookHandler {
     }
 
 
+    public Mono<ServerResponse> createBook(ServerRequest serverRequest) {
+
+        Mono<BookDocument> bookMono = serverRequest.bodyToMono(BookDocument.class);
+
+        return bookMono.flatMap(book ->
+                ServerResponse.ok().body(bookService.saveBook(book), BookDocument.class));
+    }
+
+    public Mono<ServerResponse> updateBook(ServerRequest serverRequest) {
+        String id = serverRequest.pathVariable("id");
+
+        Mono<BookDocument> bookUpdated = serverRequest.bodyToMono(BookDocument.class)
+                .flatMap(
+                        bookUpd -> {
+                            return bookService.getBookById(id).flatMap(
+                                    bookDb -> {
+                                        bookDb.setTitle(bookUpd.getTitle());
+                                        bookDb.setAuthors(bookUpd.getAuthors());
+                                        return bookService.saveBook(bookDb);
+                                    });
+                        });
+        return bookUpdated.flatMap(book -> ServerResponse.ok().body(BodyInserters.fromValue(book))).switchIfEmpty(ServerResponse.notFound().build());
+    }
+
+    public Mono<ServerResponse> deleteBook(ServerRequest serverRequest) {
+        String id = serverRequest.pathVariable("id");
+
+        return bookService.deleteBook(id)
+                .flatMap(book -> ServerResponse.noContent().build()).switchIfEmpty(ServerResponse.notFound().build());
+    }
 }

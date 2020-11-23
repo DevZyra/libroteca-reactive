@@ -13,14 +13,23 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 public class BookRouter {
 
     @Bean
-    RouterFunction<ServerResponse> bookRoutes(BookHandler bookHandler){
+    RouterFunction<ServerResponse> bookRoutes(BookHandler bookHandler) {
 
         return route()
-                .nest(path("/books"),builder -> builder
-                .GET("",bookHandler::getAllBooks)
-                .GET("/{id}",bookHandler::getBook)
-
+                .nest(path("/books"), builder -> builder
+                        .GET("", bookHandler::getAllBooks)
+                        .POST("", bookHandler::createBook)
                 ).build();
+    }
+
+    @Bean
+    RouterFunction<ServerResponse> bookRoutesWithId(BookHandler bookHandler) {
+        return route()
+                .nest(path("/books/{id}"), builder -> builder
+                        .GET("", bookHandler::getBook)
+                        .PUT("", bookHandler::updateBook)
+                        .DELETE("", bookHandler::deleteBook))
+                .build();
     }
 
 }

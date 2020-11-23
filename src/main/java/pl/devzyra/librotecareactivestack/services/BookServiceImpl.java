@@ -29,12 +29,13 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Mono<BookDocument> saveBook(BookDocument bookDocument) {
-        return null;
+        return bookRepository.save(bookDocument);
     }
 
     @Override
     public Mono<BookDocument> deleteBook(String id) {
 
-        return null;
+        return bookRepository.findById(id)
+                .flatMap(book -> bookRepository.delete(book).then(Mono.just(book)));
     }
 }
