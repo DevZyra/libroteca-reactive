@@ -24,12 +24,12 @@ public class BookRouter {
 
     @Bean
     RouterFunction<ServerResponse> bookRoutesWithId(BookHandler bookHandler) {
+
         return route()
                 .nest(path("/books/{id}"), builder -> builder
                         .GET("", bookHandler::getBook)
                         .PUT("", bookHandler::updateBook)
-                        .DELETE("", bookHandler::deleteBook))
-                .build();
+                        .DELETE("", bookHandler::deleteBook)
+                ).build();
     }
-
 }

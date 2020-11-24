@@ -18,13 +18,18 @@ public class UserRouter {
         return route()
                 .nest(path("/users"), builder -> builder
                         .GET("", userHandler::getAllUsers)
-                        .GET("/{id}", userHandler::getUser)
                         .POST("", userHandler::createUser)
-                        .PUT("/{id}", userHandler::updateUser)
-                        .DELETE("/{id}",userHandler::deleteUser))
-                .build();
-
-
+                ).build();
     }
 
+    @Bean
+    RouterFunction<ServerResponse> userRoutesWithId(UserHandler userHandler) {
+
+        return route()
+                .nest(path("/users/{id}"), builder -> builder
+                        .GET("", userHandler::getUser)
+                        .PUT("", userHandler::updateUser)
+                        .DELETE("", userHandler::deleteUser)
+                ).build();
+    }
 }
