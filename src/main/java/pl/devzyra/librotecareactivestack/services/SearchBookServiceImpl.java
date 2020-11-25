@@ -22,7 +22,7 @@ public class SearchBookServiceImpl implements SearchBookService {
     public Flux<BookDocument> searchByTitle(String title) {
         Query query = new Query();
 
-        query.addCriteria(Criteria.where("title").is(title));
+        query.addCriteria(Criteria.where("title").regex(title, "i"));
         return mongoTemplate.find(query, BookDocument.class);
     }
 }

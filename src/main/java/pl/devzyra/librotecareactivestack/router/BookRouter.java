@@ -5,18 +5,21 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import pl.devzyra.librotecareactivestack.handlers.BookHandler;
+import pl.devzyra.librotecareactivestack.handlers.SearchBookHandler;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.path;
+import static org.springframework.web.reactive.function.server.RequestPredicates.queryParam;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @Configuration
 public class BookRouter {
 
     @Bean
-    RouterFunction<ServerResponse> bookRoutes(BookHandler bookHandler) {
+    RouterFunction<ServerResponse> bookRoutes(BookHandler bookHandler, SearchBookHandler searchBookHandler) {
 
         return route()
                 .nest(path("/books"), builder -> builder
+                        .GET("", queryParam("title", t -> true), searchBookHandler::searchBookByTitle)
                         .GET("", bookHandler::getAllBooks)
                         .POST("", bookHandler::createBook)
                 ).build();
@@ -29,7 +32,9 @@ public class BookRouter {
                 .nest(path("/books/{id}"), builder -> builder
                         .GET("", bookHandler::getBook)
                         .PUT("", bookHandler::updateBook)
-                        .DELETE("", bookHandler::deleteBook)
-                ).build();
+                        .DELETE("", bookHandler::deleteBook))
+                .build();
     }
+
+
 }
