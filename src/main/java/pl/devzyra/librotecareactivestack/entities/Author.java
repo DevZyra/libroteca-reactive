@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Author {
 
-    private String firstname;
-    private String lastname;
+    private String name;
 
 }

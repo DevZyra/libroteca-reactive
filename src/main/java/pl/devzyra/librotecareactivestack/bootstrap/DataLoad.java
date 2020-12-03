@@ -2,18 +2,21 @@ package pl.devzyra.librotecareactivestack.bootstrap;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import pl.devzyra.librotecareactivestack.entities.Author;
 import pl.devzyra.librotecareactivestack.entities.BookDocument;
 import pl.devzyra.librotecareactivestack.entities.UserDocument;
-import pl.devzyra.librotecareactivestack.repositories.BookReactiveRepository;
-import pl.devzyra.librotecareactivestack.repositories.UserReactiveRepository;
+import pl.devzyra.librotecareactivestack.repositories.BookElasticReactiveRepository;
+import pl.devzyra.librotecareactivestack.repositories.UserElasticReactiveRepository;
+
+import java.util.List;
 
 @Component
 public class DataLoad implements CommandLineRunner {
 
-    private final BookReactiveRepository bookRepository;
-    private final UserReactiveRepository userRepository;
+    private final BookElasticReactiveRepository bookRepository;
+    private final UserElasticReactiveRepository userRepository;
 
-    public DataLoad(BookReactiveRepository bookRepository, UserReactiveRepository userRepository) {
+    public DataLoad(BookElasticReactiveRepository bookRepository, UserElasticReactiveRepository userRepository) {
         this.bookRepository = bookRepository;
         this.userRepository = userRepository;
     }
@@ -24,8 +27,8 @@ public class DataLoad implements CommandLineRunner {
         bookRepository.deleteAll().subscribe();
         userRepository.deleteAll().subscribe();
 
-        bookRepository.save(BookDocument.builder().title("Witcher").build()).block();
-        bookRepository.save(BookDocument.builder().title("Switcher").build()).block();
+        bookRepository.save(BookDocument.builder().title("Witcher").authors(List.of(new Author("Andrzej Sapkowski"))).build()).block();
+        bookRepository.save(BookDocument.builder().title("Switcher").authors(List.of(new Author("Sapkow Andrzej Andrzejowski"))).build()).block();
 
         userRepository.save(UserDocument.builder().firstname("admin").lastname("admin").email("admin@libroteca.com").build()).block();
 

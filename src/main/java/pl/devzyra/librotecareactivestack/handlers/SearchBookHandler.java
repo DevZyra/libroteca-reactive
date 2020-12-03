@@ -28,4 +28,14 @@ public class SearchBookHandler {
         return ServerResponse.ok().body(bookDocumentFlux, BookDocument.class);
     }
 
+    public Mono<ServerResponse> searchBookByAuthor(ServerRequest serverRequest) {
+        Optional<String> qauthor = serverRequest.queryParam("author");
+        String s = qauthor.get();
+
+
+        Flux<BookDocument> bookDocumentFlux = searchBookService.searchByAuthor(s);
+
+        return ServerResponse.ok().body(bookDocumentFlux, BookDocument.class);
+
+    }
 }

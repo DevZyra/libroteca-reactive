@@ -7,4 +7,6 @@ public interface SearchBookService {
 
     Flux<BookDocument> searchByTitle(String title);
 
+    Flux<BookDocument> searchByAuthor(String name);
+
 }

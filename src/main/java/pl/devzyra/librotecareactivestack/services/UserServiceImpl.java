@@ -3,7 +3,7 @@ package pl.devzyra.librotecareactivestack.services;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.devzyra.librotecareactivestack.entities.UserDocument;
-import pl.devzyra.librotecareactivestack.repositories.UserReactiveRepository;
+import pl.devzyra.librotecareactivestack.repositories.UserElasticReactiveRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -12,9 +12,9 @@ import reactor.core.publisher.Mono;
 public class UserServiceImpl implements pl.devzyra.librotecareactivestack.services.UserService {
 
 
-    private final UserReactiveRepository userRepository;
+    private final UserElasticReactiveRepository userRepository;
 
-    public UserServiceImpl(UserReactiveRepository userRepository) {
+    public UserServiceImpl(UserElasticReactiveRepository userRepository) {
         this.userRepository = userRepository;
     }
 

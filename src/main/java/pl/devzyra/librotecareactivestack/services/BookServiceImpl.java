@@ -3,7 +3,7 @@ package pl.devzyra.librotecareactivestack.services;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.devzyra.librotecareactivestack.entities.BookDocument;
-import pl.devzyra.librotecareactivestack.repositories.BookReactiveRepository;
+import pl.devzyra.librotecareactivestack.repositories.BookElasticReactiveRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -11,9 +11,9 @@ import reactor.core.publisher.Mono;
 @Transactional
 public class BookServiceImpl implements BookService {
 
-    private final BookReactiveRepository bookRepository;
+    private final BookElasticReactiveRepository bookRepository;
 
-    public BookServiceImpl(BookReactiveRepository bookRepository) {
+    public BookServiceImpl(BookElasticReactiveRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 

@@ -6,7 +6,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import pl.devzyra.librotecareactivestack.entities.UserDocument;
-import pl.devzyra.librotecareactivestack.repositories.UserReactiveRepository;
+import pl.devzyra.librotecareactivestack.repositories.UserElasticReactiveRepository;
 import pl.devzyra.librotecareactivestack.services.UserService;
 import reactor.core.publisher.Mono;
 
@@ -15,11 +15,11 @@ public class UserHandler {
 
 
     private final UserService userService;
-    private final UserReactiveRepository userReactiveRepository;
+    private final UserElasticReactiveRepository userElasticReactiveRepository;
 
-    public UserHandler(UserService userService, UserReactiveRepository userReactiveRepository) {
+    public UserHandler(UserService userService, UserElasticReactiveRepository userElasticReactiveRepository) {
         this.userService = userService;
-        this.userReactiveRepository = userReactiveRepository;
+        this.userElasticReactiveRepository = userElasticReactiveRepository;
     }
 
 
