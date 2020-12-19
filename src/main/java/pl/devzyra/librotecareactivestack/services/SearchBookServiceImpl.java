@@ -1,5 +1,7 @@
 package pl.devzyra.librotecareactivestack.services;
 
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.data.elasticsearch.core.ReactiveElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
@@ -8,8 +10,7 @@ import org.springframework.stereotype.Service;
 import pl.devzyra.librotecareactivestack.entities.BookDocument;
 import reactor.core.publisher.Flux;
 
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.termQuery;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 @Service
 public class SearchBookServiceImpl implements SearchBookService {
@@ -24,9 +25,11 @@ public class SearchBookServiceImpl implements SearchBookService {
     public Flux<BookDocument> searchByTitle(String title) {
 
 
-        NativeSearchQuery query = new NativeSearchQueryBuilder()
-                .withQuery(matchQuery("title", title))
-                .build();
+        QueryBuilder boolQuery = QueryBuilders.boolQuery()
+                .should(queryStringQuery(title).field("title").lenient(true))
+                .should(queryStringQuery("*" + title + "*").field("title").lenient(true));
+
+        NativeSearchQuery query = new NativeSearchQueryBuilder().withQuery(boolQuery).build();
 
 
         return reactiveElasticsearchOperations.search(query, BookDocument.class).map(SearchHit::getContent);
