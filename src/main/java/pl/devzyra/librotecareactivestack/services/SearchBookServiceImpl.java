@@ -24,13 +24,12 @@ public class SearchBookServiceImpl implements SearchBookService {
     @Override
     public Flux<BookDocument> searchByTitle(String title) {
 
-
+        // info: Not the most performant way - using wildcards, but support partial-word search
         QueryBuilder boolQuery = boolQuery()
                 .should(queryStringQuery(title).field("title").lenient(true))
                 .should(queryStringQuery("*" + title + "*").field("title").lenient(true));
 
         NativeSearchQuery query = new NativeSearchQueryBuilder().withQuery(boolQuery).build();
-
 
         return reactiveElasticsearchOperations.search(query, BookDocument.class).map(SearchHit::getContent);
     }

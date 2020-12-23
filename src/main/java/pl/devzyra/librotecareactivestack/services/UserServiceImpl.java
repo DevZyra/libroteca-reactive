@@ -1,5 +1,7 @@
 package pl.devzyra.librotecareactivestack.services;
 
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.devzyra.librotecareactivestack.entities.UserDocument;
@@ -9,7 +11,7 @@ import reactor.core.publisher.Mono;
 
 @Service
 @Transactional
-public class UserServiceImpl implements pl.devzyra.librotecareactivestack.services.UserService {
+public class UserServiceImpl implements UserService, ReactiveUserDetailsService {
 
 
     private final UserElasticReactiveRepository userRepository;
@@ -38,5 +40,10 @@ public class UserServiceImpl implements pl.devzyra.librotecareactivestack.servic
 
         return userRepository.findById(id)
                 .flatMap(user -> userRepository.delete(user).then(Mono.just(user)));
+    }
+
+    @Override
+    public Mono<UserDetails> findByUsername(String email) {
+        return userRepository.findByEmail(email);
     }
 }
