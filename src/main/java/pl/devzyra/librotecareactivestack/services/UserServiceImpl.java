@@ -1,7 +1,7 @@
 package pl.devzyra.librotecareactivestack.services;
 
-import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.devzyra.librotecareactivestack.entities.UserDocument;
@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
 
 @Service
 @Transactional
-public class UserServiceImpl implements UserService, ReactiveUserDetailsService {
+public class UserServiceImpl implements UserService {
 
 
     private final UserElasticReactiveRepository userRepository;
@@ -44,6 +44,7 @@ public class UserServiceImpl implements UserService, ReactiveUserDetailsService 
 
     @Override
     public Mono<UserDetails> findByUsername(String email) {
-        return userRepository.findByEmail(email);
+        return userRepository.findByEmail(email)
+                .switchIfEmpty(Mono.defer(()->Mono.error(new UsernameNotFoundException("User with provided email does not exist."))));
     }
 }
