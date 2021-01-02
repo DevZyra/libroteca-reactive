@@ -1,21 +1,20 @@
 package pl.devzyra.librotecareactivestack.config;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtUtils {
@@ -25,7 +24,12 @@ public class JwtUtils {
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put(AUTHORITIES_KEY, userDetails.getAuthorities());
+
+        String roles = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        claims.put(AUTHORITIES_KEY, roles);
 
         return createToken(claims, userDetails.getUsername());
     }
@@ -74,12 +78,16 @@ public class JwtUtils {
     }
 
     public Authentication getAuthentication(String token) {
-        Claims claims = extractAllClaims(token);
+        final JwtParser jwtParser = Jwts.parserBuilder().setSigningKey(secret.getBytes()).build();
 
-        Object authoritiesClaim = claims.get(AUTHORITIES_KEY);
+        final Jws<Claims> claimsJws = jwtParser.parseClaimsJws(token);
 
-        Collection<? extends GrantedAuthority> authorities = authoritiesClaim == null ? AuthorityUtils.NO_AUTHORITIES
-                : AuthorityUtils.commaSeparatedStringToAuthorityList(authoritiesClaim.toString());
+        final Claims claims = claimsJws.getBody();
+
+        final Collection<? extends GrantedAuthority> authorities =
+                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
 
         return new UsernamePasswordAuthenticationToken(claims.getSubject(), token, authorities);
     }

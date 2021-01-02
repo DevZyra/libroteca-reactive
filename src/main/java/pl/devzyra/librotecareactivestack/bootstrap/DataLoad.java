@@ -37,8 +37,15 @@ public class DataLoad {
 
         userRepository.save(UserDocument.builder()
                 .firstname("admin").lastname("admin")
-                .email("admin").encryptedPassword("{bcrypt}$2a$10$X/GEwCWons1vyPEz08UaUer85yXPApzc8MuCYTghx4XqqgNuP5QFS")
-                .roles(Set.of(new SimpleGrantedAuthority("ROLE_ADMIN"),new SimpleGrantedAuthority("ROLE_USER")))
+                .email("admin").encryptedPassword("$2a$10$X/GEwCWons1vyPEz08UaUer85yXPApzc8MuCYTghx4XqqgNuP5QFS")
+                .roles(Set.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER")))
+                .build())
+                .block();
+
+        userRepository.save(UserDocument.builder()
+                .firstname("user").lastname("user")
+                .email("user").encryptedPassword("$2a$10$m4W9p/NWt/P2.CtKZ3KnAu4B3I2PnAVtzhwIvwHfR0vkI7gbNU6/q")
+                .roles(Set.of(new SimpleGrantedAuthority("ROLE_USER")))
                 .build())
                 .block();
 
