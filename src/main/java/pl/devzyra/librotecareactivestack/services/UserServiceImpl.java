@@ -7,24 +7,28 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.devzyra.librotecareactivestack.dtos.UserDto;
 import pl.devzyra.librotecareactivestack.dtos.requests.UserLoginRequest;
 import pl.devzyra.librotecareactivestack.entities.UserDocument;
+import pl.devzyra.librotecareactivestack.mappers.UserMapper;
 import pl.devzyra.librotecareactivestack.repositories.UserElasticReactiveRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Service
 @Transactional
-
 public class UserServiceImpl implements UserService {
 
 
     private final UserElasticReactiveRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
 
-    public UserServiceImpl(UserElasticReactiveRepository userRepository, @Lazy PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserElasticReactiveRepository userRepository, @Lazy PasswordEncoder passwordEncoder, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -59,6 +63,16 @@ public class UserServiceImpl implements UserService {
                 return Mono.error(new BadCredentialsException("Provided credentials does not match"));
             }
         });
+    }
+
+    @Override
+    public Mono<UserDocument> updateUser(String id, UserDto userDto) {
+        return userRepository.findById(id)
+                .map(user -> userMapper.mapToUser(user, userDto))
+                .doOnSuccess(user -> user.setEncryptedPassword(passwordEncoder.encode(userDto.getPassword())))
+                .subscribeOn(Schedulers.parallel())
+                .flatMap(userRepository::save)
+                .log();
     }
 
     @Override

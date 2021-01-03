@@ -13,5 +13,6 @@ public class Address {
     private String secondLine;
     private String city;
     private String country;
+    private String zipcode;
 
 }

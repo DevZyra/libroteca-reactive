@@ -5,10 +5,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import pl.devzyra.librotecareactivestack.dtos.UserDto;
 import pl.devzyra.librotecareactivestack.entities.UserDocument;
 import pl.devzyra.librotecareactivestack.repositories.UserElasticReactiveRepository;
 import pl.devzyra.librotecareactivestack.services.UserService;
 import reactor.core.publisher.Mono;
+
+import static org.springframework.web.reactive.function.BodyInserters.fromValue;
 
 @Component
 public class UserHandler {
@@ -53,20 +56,10 @@ public class UserHandler {
     public Mono<ServerResponse> updateUser(ServerRequest serverRequest) {
         String id = serverRequest.pathVariable("id");
 
-        Mono<UserDocument> userUpdated = serverRequest.bodyToMono(UserDocument.class)
-                .flatMap(
-                        userUpd -> {
-                            return userService.getUserById(id).flatMap(
-                                    userDb -> {
-                                        userDb.setFirstname(userUpd.getFirstname());
-                                        userDb.setLastname(userUpd.getLastname());
-                                        userDb.setEmail(userUpd.getEmail());
-                                        userDb.setAddress(userUpd.getAddress());
-                                        return userService.saveUser(userDb);
-                                    });
-                        });
+        return serverRequest.bodyToMono(UserDto.class)
+                .flatMap(userDto -> userService.updateUser(id,userDto))
+                .flatMap(userResponse -> ServerResponse.ok().bodyValue(userResponse)).switchIfEmpty(ServerResponse.notFound().build());
 
-        return userUpdated.flatMap(response -> ServerResponse.ok().body(BodyInserters.fromValue(response))).switchIfEmpty(ServerResponse.notFound().build());
     }
 
     public Mono<ServerResponse> deleteUser(ServerRequest serverRequest) {
