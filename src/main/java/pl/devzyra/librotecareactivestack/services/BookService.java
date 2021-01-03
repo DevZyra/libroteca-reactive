@@ -14,4 +14,6 @@ public interface BookService {
 
     Mono<BookDocument> deleteBook(String id);
 
+    Mono<BookDocument> updateBook(String id, BookDocument bookDocument);
+
 }

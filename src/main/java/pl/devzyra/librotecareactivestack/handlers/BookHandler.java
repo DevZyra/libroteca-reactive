@@ -41,17 +41,11 @@ public class BookHandler {
     public Mono<ServerResponse> updateBook(ServerRequest serverRequest) {
         String id = serverRequest.pathVariable("id");
 
-        Mono<BookDocument> bookUpdated = serverRequest.bodyToMono(BookDocument.class)
-                .flatMap(
-                        bookUpd -> {
-                            return bookService.getBookById(id).flatMap(
-                                    bookDb -> {
-                                        bookDb.setTitle(bookUpd.getTitle());
-                                        bookDb.setAuthors(bookUpd.getAuthors());
-                                        return bookService.saveBook(bookDb);
-                                    });
-                        });
-        return bookUpdated.flatMap(book -> ServerResponse.ok().body(BodyInserters.fromValue(book))).switchIfEmpty(ServerResponse.notFound().build());
+        return serverRequest.bodyToMono(BookDocument.class)
+                .flatMap(book -> bookService.updateBook(id, book))
+                .flatMap(bookDocument -> ServerResponse.accepted().bodyValue(bookDocument))
+                .switchIfEmpty(ServerResponse.notFound().build());
+
     }
 
     public Mono<ServerResponse> deleteBook(ServerRequest serverRequest) {

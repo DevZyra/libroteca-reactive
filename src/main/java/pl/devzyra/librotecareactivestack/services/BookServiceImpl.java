@@ -3,6 +3,7 @@ package pl.devzyra.librotecareactivestack.services;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.devzyra.librotecareactivestack.entities.BookDocument;
+import pl.devzyra.librotecareactivestack.mappers.BookMapper;
 import pl.devzyra.librotecareactivestack.repositories.BookElasticReactiveRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -12,9 +13,11 @@ import reactor.core.publisher.Mono;
 public class BookServiceImpl implements BookService {
 
     private final BookElasticReactiveRepository bookRepository;
+    private final BookMapper bookMapper;
 
-    public BookServiceImpl(BookElasticReactiveRepository bookRepository) {
+    public BookServiceImpl(BookElasticReactiveRepository bookRepository, BookMapper bookMapper) {
         this.bookRepository = bookRepository;
+        this.bookMapper = bookMapper;
     }
 
     @Override
@@ -37,5 +40,12 @@ public class BookServiceImpl implements BookService {
 
         return bookRepository.findById(id)
                 .flatMap(book -> bookRepository.delete(book).then(Mono.just(book)));
+    }
+
+    @Override
+    public Mono<BookDocument> updateBook(String id, BookDocument bookDocument) {
+        return bookRepository.findById(id)
+                .map(book -> bookMapper.mapToBook(book, bookDocument))
+                .flatMap(bookRepository::save);
     }
 }

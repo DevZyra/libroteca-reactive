@@ -71,8 +71,7 @@ public class UserServiceImpl implements UserService {
                 .map(user -> userMapper.mapToUser(user, userDto))
                 .doOnSuccess(user -> user.setEncryptedPassword(passwordEncoder.encode(userDto.getPassword())))
                 .subscribeOn(Schedulers.parallel())
-                .flatMap(userRepository::save)
-                .log();
+                .flatMap(userRepository::save);
     }
 
     @Override

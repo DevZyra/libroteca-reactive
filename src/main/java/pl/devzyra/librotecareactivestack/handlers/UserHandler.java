@@ -2,7 +2,6 @@ package pl.devzyra.librotecareactivestack.handlers;
 
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import pl.devzyra.librotecareactivestack.dtos.UserDto;
@@ -10,8 +9,6 @@ import pl.devzyra.librotecareactivestack.entities.UserDocument;
 import pl.devzyra.librotecareactivestack.repositories.UserElasticReactiveRepository;
 import pl.devzyra.librotecareactivestack.services.UserService;
 import reactor.core.publisher.Mono;
-
-import static org.springframework.web.reactive.function.BodyInserters.fromValue;
 
 @Component
 public class UserHandler {
@@ -57,8 +54,9 @@ public class UserHandler {
         String id = serverRequest.pathVariable("id");
 
         return serverRequest.bodyToMono(UserDto.class)
-                .flatMap(userDto -> userService.updateUser(id,userDto))
-                .flatMap(userResponse -> ServerResponse.ok().bodyValue(userResponse)).switchIfEmpty(ServerResponse.notFound().build());
+                .flatMap(userDto -> userService.updateUser(id, userDto))
+                .flatMap(userResponse -> ServerResponse.ok().bodyValue(userResponse))
+                .switchIfEmpty(ServerResponse.notFound().build());
 
     }
 
