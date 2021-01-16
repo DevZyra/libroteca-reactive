@@ -8,6 +8,8 @@ import pl.devzyra.librotecareactivestack.repositories.BookElasticReactiveReposit
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Comparator;
+
 @Service
 @Transactional
 public class BookServiceImpl implements BookService {
@@ -28,6 +30,14 @@ public class BookServiceImpl implements BookService {
     @Override
     public Flux<BookDocument> getAllBooks() {
         return bookRepository.findAll();
+    }
+
+    @Override
+    public Flux<BookDocument> getBooksPaged(int page, int limit) {
+        return bookRepository.findAll()
+                .sort(Comparator.comparing(BookDocument::getTitle).reversed())
+                .skip(page * limit)
+                .take(limit);
     }
 
     @Override

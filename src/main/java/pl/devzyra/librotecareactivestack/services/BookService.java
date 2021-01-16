@@ -10,6 +10,8 @@ public interface BookService {
 
     Flux<BookDocument> getAllBooks();
 
+    Flux<BookDocument> getBooksPaged(int page, int limit);
+
     Mono<BookDocument> saveBook(BookDocument bookDocument);
 
     Mono<BookDocument> deleteBook(String id);

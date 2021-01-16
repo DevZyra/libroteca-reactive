@@ -21,6 +21,7 @@ public class BookRouter {
                 .nest(path("/books"), builder -> builder
                         .GET("", queryParam("title", t -> true), searchBookHandler::searchBookByTitle)
                         .GET("", queryParam("author", t -> true), searchBookHandler::searchBookByAuthor)
+                        .GET("", queryParam("page", t -> true).and(queryParam("limit", t -> true)), bookHandler::getBooksPaged)
                         .GET("", bookHandler::getAllBooks)
                         .POST("", bookHandler::createBook)
                 ).build();

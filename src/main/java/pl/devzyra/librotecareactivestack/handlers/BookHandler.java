@@ -30,6 +30,13 @@ public class BookHandler {
     }
 
 
+    public Mono<ServerResponse> getBooksPaged(ServerRequest serverRequest) {
+        int page = Integer.parseInt(serverRequest.queryParam("page").orElse("0"));
+        int limit = Integer.parseInt(serverRequest.queryParam("limit").orElse("25"));
+
+        return ServerResponse.ok().body(bookService.getBooksPaged(page, limit), BookDocument.class);
+    }
+
     public Mono<ServerResponse> createBook(ServerRequest serverRequest) {
 
         Mono<BookDocument> bookMono = serverRequest.bodyToMono(BookDocument.class);

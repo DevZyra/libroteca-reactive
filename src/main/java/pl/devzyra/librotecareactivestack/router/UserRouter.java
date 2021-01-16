@@ -7,6 +7,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import pl.devzyra.librotecareactivestack.handlers.UserHandler;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.path;
+import static org.springframework.web.reactive.function.server.RequestPredicates.queryParam;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @Configuration
@@ -17,6 +18,7 @@ public class UserRouter {
 
         return route()
                 .nest(path("/users"), builder -> builder
+                        .GET("", queryParam("page", t -> true).and(queryParam("limit", t -> true)), userHandler::getUsersPaged)
                         .GET("", userHandler::getAllUsers)
                         .POST("", userHandler::createUser)
                 ).build();

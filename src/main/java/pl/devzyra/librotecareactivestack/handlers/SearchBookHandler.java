@@ -8,8 +8,6 @@ import pl.devzyra.librotecareactivestack.services.SearchBookService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Optional;
-
 @Component
 public class SearchBookHandler {
 
@@ -20,20 +18,15 @@ public class SearchBookHandler {
     }
 
     public Mono<ServerResponse> searchBookByTitle(ServerRequest serverRequest) {
-        Optional<String> qtitle = serverRequest.queryParam("title");
-        String str = qtitle.get();
 
-        Flux<BookDocument> bookDocumentFlux = searchBookService.searchByTitle(str);
+        Flux<BookDocument> bookDocumentFlux = searchBookService.searchByTitle(serverRequest.queryParam("title").orElse(""));
 
         return ServerResponse.ok().body(bookDocumentFlux, BookDocument.class);
     }
 
     public Mono<ServerResponse> searchBookByAuthor(ServerRequest serverRequest) {
-        Optional<String> qauthor = serverRequest.queryParam("author");
-        String s = qauthor.get();
 
-
-        Flux<BookDocument> bookDocumentFlux = searchBookService.searchByAuthor(s);
+        Flux<BookDocument> bookDocumentFlux = searchBookService.searchByAuthor(serverRequest.queryParam("author").orElse(""));
 
         return ServerResponse.ok().body(bookDocumentFlux, BookDocument.class);
 

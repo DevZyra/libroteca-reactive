@@ -16,6 +16,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+import java.util.Comparator;
+
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
@@ -39,6 +41,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public Flux<UserDocument> getAllUsers() {
         return userRepository.findAll().log();
+    }
+
+    @Override
+    public Flux<UserDocument> getUsersPaged(int page, int limit) {
+        return userRepository.findAll()
+                .sort(Comparator.comparing(UserDocument::getEmail))
+                .skip(page * limit)
+                .take(limit);
     }
 
     @Override

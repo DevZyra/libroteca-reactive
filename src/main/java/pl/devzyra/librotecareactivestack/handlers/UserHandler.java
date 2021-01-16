@@ -6,7 +6,6 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import pl.devzyra.librotecareactivestack.dtos.UserDto;
 import pl.devzyra.librotecareactivestack.entities.UserDocument;
-import pl.devzyra.librotecareactivestack.repositories.UserElasticReactiveRepository;
 import pl.devzyra.librotecareactivestack.services.UserService;
 import reactor.core.publisher.Mono;
 
@@ -15,11 +14,9 @@ public class UserHandler {
 
 
     private final UserService userService;
-    private final UserElasticReactiveRepository userElasticReactiveRepository;
 
-    public UserHandler(UserService userService, UserElasticReactiveRepository userElasticReactiveRepository) {
+    public UserHandler(UserService userService) {
         this.userService = userService;
-        this.userElasticReactiveRepository = userElasticReactiveRepository;
     }
 
 
@@ -35,8 +32,14 @@ public class UserHandler {
 
     public Mono<ServerResponse> getAllUsers(ServerRequest serverRequest) {
 
-
         return ServerResponse.ok().body(userService.getAllUsers(), UserDocument.class);
+    }
+
+    public Mono<ServerResponse> getUsersPaged(ServerRequest serverRequest) {
+        int page = Integer.parseInt(serverRequest.queryParam("page").orElse("0"));
+        int limit = Integer.parseInt(serverRequest.queryParam("limit").orElse("25"));
+
+        return ServerResponse.ok().body(userService.getUsersPaged(page, limit), UserDocument.class);
     }
 
     public Mono<ServerResponse> createUser(ServerRequest serverRequest) {

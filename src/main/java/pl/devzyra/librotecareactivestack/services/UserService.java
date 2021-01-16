@@ -14,6 +14,8 @@ public interface UserService extends ReactiveUserDetailsService {
 
     Flux<UserDocument> getAllUsers();
 
+    Flux<UserDocument> getUsersPaged(int page, int limit);
+
     Mono<UserDocument> saveUser(UserDocument userDocument);
 
     Mono<UserDocument> deleteUser(String id);
